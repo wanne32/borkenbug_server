@@ -1,0 +1,11 @@
+[Unit]
+Description = RT FastCGI Socket
+
+[Socket]
+SocketUser = fcgi
+SocketGroup = www-data
+SocketMode = 0660
+ListenStream = /var/run/fcgi.sock
+
+[Install]
+WantedBy = sockets.target

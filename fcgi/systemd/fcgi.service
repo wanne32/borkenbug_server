@@ -1,0 +1,14 @@
+[Unit]
+Description = FCGI Script
+
+[Service]
+User = fcgi
+Group = fcgi
+ExecStart = /usr/local/bin/fcgi
+StandardOutput = null
+StandardInput = socket
+StandardError = null
+Restart = always
+
+[Install]
+WantedBy = multi-user.target

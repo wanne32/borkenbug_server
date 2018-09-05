@@ -34,6 +34,11 @@ int main(int argc, char *argv[])
     return 1;
   }
   while (FCGI_Accept() >= 0) {
+    if(!getenv("QUERY_STRING"))
+    {
+      syslog(LOG_ERR,"No QUERY_STRING given!");
+      break;
+    }
     char* dataset=curl_easy_unescape(curl,getenv("QUERY_STRING"),0,NULL);
     if(!dataset)
       syslog(LOG_NOTICE,"urlunescape failed.");
@@ -41,14 +46,16 @@ int main(int argc, char *argv[])
     int status = regexec(&rgex, dataset, (size_t) 0, NULL, 0);
     if(status)
     {
-      printf("Content-type: text/plain\r\n\r\n Wrong Format");
+      printf("Content-type: text/plain\r\n\r\nWrong Format");
     }
     else
     {
       int ret=fputs(dataset,file);
+      if(ret>0)
+        fputc('\n',file);
       fflush(file);
       if(ret!=EOF)
-        printf("Content-type: text/plain\r\n\r\n successfully added %d Bytes:\n%s",ret,dataset);
+        printf("Content-type: text/plain\r\n\r\nsuccessfully added:\n%s",dataset);
     }
     curl_free(dataset);
   }
